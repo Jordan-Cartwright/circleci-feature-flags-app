@@ -285,11 +285,11 @@ function render(data) {
 
   // Empty State
   if (!data || data.length === 0) {
-    renderEmptyState({
+    renderEmptyState(table, {
       title: "No feature flags found",
       subtitle: "Ready to create your first flag?",
       buttonText: "Create Feature Flag",
-      onAction: () => {
+      onClick: () => {
         openModal();
 
         setTimeout(() => {

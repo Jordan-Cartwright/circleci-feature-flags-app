@@ -9,6 +9,9 @@ def test_app_creates(app):
 def test_config_loaded(app):
     assert app.config["TESTING"] is True
 
+    assert "DB_TYPE" in app.config
+    assert app.config["DB_TYPE"] == "sqlite"
+
     assert "SQLALCHEMY_DATABASE_URI" in app.config
     assert app.config["SQLALCHEMY_DATABASE_URI"] == "sqlite:///:memory:"
 
