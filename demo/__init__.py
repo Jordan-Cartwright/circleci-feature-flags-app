@@ -30,9 +30,10 @@ def create_app(config_name: str = "") -> Flask:
     migrate.init_app(app, db)
 
     # Register blueprints
+    from .blueprints.api import api_blueprint
     from .blueprints.dashboard import ui_blueprint
 
     app.register_blueprint(ui_blueprint)
-    # app.register_blueprint(api_blueprint)
+    app.register_blueprint(api_blueprint)
 
     return app

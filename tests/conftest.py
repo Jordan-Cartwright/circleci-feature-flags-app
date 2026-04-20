@@ -15,9 +15,6 @@ def app():
 
     with app.app_context():
         # Apply migrations to the test database
-        # TODO: use upgrade to make sure the migrations work
-        # TODO: see what the better pattern should be online
-        # upgrade()
         db.create_all()
 
         yield app
