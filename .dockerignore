@@ -1,0 +1,9 @@
+# Ignore Everything
+**
+
+# Include build files
+!docker/entrypoint.sh
+!demo/
+!migrations/
+!main.py
+!requirements.txt
