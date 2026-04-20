@@ -1,0 +1,234 @@
+version: 2.1
+
+executors:
+  amd64-machine:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: medium
+
+  arm64-machine:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: arm.medium
+
+parameters:
+  image:
+    type: string
+    default: jordancartwright/feature-flags
+  registry-username:
+    type: string
+    default: jordancartwright
+
+jobs:
+  test:
+    description: "Run tests"
+    docker:
+      # Primary container
+      - image: cimg/python:3.14
+        environment:
+          SQLALCHEMY_DATABASE_URI: postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@localhost:5432/$POSTGRES_DB
+
+      # Database container for tests
+      - image: postgres:18
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+
+    steps:
+      - checkout
+
+      - run:
+          name: Install Dockerize
+          command: |
+            wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+              && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+              && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
+          environment:
+            DOCKERIZE_VERSION: v0.11.0
+
+      - run:
+          name: Wait for Database
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Install Python Dependencies
+          command: |
+            pip install --upgrade pip
+            pip install -r requirements.txt
+            pip install -r requirements-dev.txt
+
+      - run:
+          name: Run Tests
+          environment:
+            PYTHON: python
+          command: make test
+
+      - store_test_results:
+          path: test-results
+
+      - store_artifacts:
+          path: htmlcov
+
+  build-amd64:
+    executor: amd64-machine
+    steps:
+      - checkout
+
+      - run:
+          name: Registry Login
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "<< pipeline.parameters.registry-username >>" --password-stdin
+
+      - run:
+          name: Build amd64 image
+          command: |
+            IMAGE="<< pipeline.parameters.image >>"
+            TAG="${CIRCLE_SHA1:0:7}"
+
+            docker buildx use default || docker buildx create --name default --use
+
+            if [ "$CIRCLE_PULL_REQUEST" != "" ]; then
+              echo "PR build — local only"
+
+              docker buildx build \
+                --platform linux/amd64 \
+                --tag ${IMAGE}:${TAG} \
+                --load \
+                .
+            else
+              echo "Main build — push by digest"
+              docker buildx build \
+                --platform linux/amd64 \
+                --tag ${IMAGE}:${TAG} \
+                --push \
+                --metadata-file metadata.json \
+                .
+
+              jq -r '.["containerimage.digest"]' metadata.json > amd64.digest
+            fi
+
+      # Save files for use in another job
+      - persist_to_workspace:
+          root: .
+          paths:
+            - amd64.digest
+
+  build-arm64:
+    executor: arm64-machine
+    steps:
+      - checkout
+
+      - run:
+          name: Registry Login
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "<< pipeline.parameters.registry-username >>" --password-stdin
+
+      - run:
+          name: Build arm64 image
+          command: |
+            IMAGE="<< pipeline.parameters.image >>"
+            TAG="${CIRCLE_SHA1:0:7}"
+
+            docker buildx use default || docker buildx create --name default --use
+
+            if [ "$CIRCLE_PULL_REQUEST" != "" ]; then
+              echo "PR build — local only"
+
+              docker buildx build \
+                --platform linux/arm64 \
+                --tag ${IMAGE}:${TAG} \
+                --load \
+                .
+            else
+              echo "Main build — push by digest"
+
+              docker buildx build \
+                --platform linux/arm64 \
+                --tag ${IMAGE}:${TAG} \
+                --push \
+                --metadata-file metadata.json \
+                .
+
+              jq -r '.["containerimage.digest"]' metadata.json > arm64.digest
+            fi
+
+      # Save files for use in another job
+      - persist_to_workspace:
+          root: .
+          paths:
+            - arm64.digest
+
+  publish-manifest:
+    executor: amd64-machine
+    steps:
+      - attach_workspace:
+          at: /tmp/digests
+
+      - run:
+          name: Registry Login
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "<< pipeline.parameters.registry-username >>" --password-stdin
+
+      - run:
+          name: Create and push multi-arch manifest
+          command: |
+            IMAGE="<< pipeline.parameters.image >>"
+            TAG="${CIRCLE_SHA1:0:7}"
+
+            AMD64_DIGEST=$(cat /tmp/digests/amd64.digest)
+            ARM64_DIGEST=$(cat /tmp/digests/arm64.digest)
+
+            # versioned tag (full commit SHA)
+            docker buildx imagetools create \
+              -t ${IMAGE}:${TAG} \
+              ${IMAGE}@${AMD64_DIGEST} \
+              ${IMAGE}@${ARM64_DIGEST}
+
+            # latest tag
+            if [ "$CIRCLE_BRANCH" = "main" ]; then
+              docker buildx imagetools create \
+                -t ${IMAGE}:latest \
+                ${IMAGE}@${AMD64_DIGEST} \
+                ${IMAGE}@${ARM64_DIGEST}
+            fi
+
+  deploy:
+    description: "Deploy to hosting provider"
+    docker:
+      - image: cimg/base:current-24.04
+
+    steps:
+      - checkout
+
+      - run:
+          name: Deploy to Render
+          command: |
+            IMAGE_REGISTRY="docker.io"
+            IMAGE_NAMESPACE="jordancartwright"
+            IMAGE_NAME="feature-flags"
+            IMAGE_TAG="${CIRCLE_SHA1:0:7}"
+
+            scripts/deploy.sh "${IMAGE_REGISTRY}/${IMAGE_NAMESPACE}/${IMAGE_NAME}:${IMAGE_TAG}"
+
+workflows:
+  ci:
+    jobs:
+      - test
+      - build-amd64:
+          requires:
+            - test
+      - build-arm64:
+          requires:
+            - test
+      - publish-manifest:
+          requires:
+            - build-amd64
+            - build-arm64
+      - deploy:
+          requires:
+            - publish-manifest
+          filters:
+            branches:
+              only:
+                - main # only deploy when on main
