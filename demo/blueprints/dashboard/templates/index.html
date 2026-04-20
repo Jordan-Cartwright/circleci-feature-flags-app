@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Feature Flag Dashboard</title>
+
+    <link
+      rel="stylesheet"
+      href="{{ url_for('ui.static', filename='css/dashboard.css') }}"
+    />
+  </head>
+
+  <body>
+    <!-- HEADER -->
+    <div class="header">
+      <h2>Feature Flag Dashboard</h2>
+
+      <div class="controls">
+        <select id="env">
+          <option value="dev">dev</option>
+          <option value="staging">staging</option>
+          <option value="prod">prod</option>
+        </select>
+
+        <div class="search-wrapper">
+          <input
+            id="search-box"
+            type="text"
+            placeholder="Search flags..."
+            class="search-input"
+          />
+
+          <div class="search-shortcut">auto</div>
+        </div>
+
+        <button id="openModalBtn">+ New Flag</button>
+        <button id="autoBtn">Auto Refresh: ON</button>
+        <button id="refreshBtn">Refresh</button>
+        <button id="themeToggle">🌙</button>
+        <button id="jsonBtn">JSON</button>
+      </div>
+    </div>
+
+    <!-- ERROR -->
+    <div id="error" class="error"></div>
+
+    <!-- FLAGS TABLE -->
+    <table>
+      <thead>
+        <tr>
+          <th>Flag</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody id="flags"></tbody>
+    </table>
+
+    <!-- META -->
+    <div class="meta" id="meta"></div>
+
+    <!-- JSON DEBUG PANEL -->
+    <pre class="panel" id="jsonPanel"></pre>
+
+    <!-- MODAL -->
+    <div id="modalOverlay" class="modal-overlay hidden">
+      <div class="modal">
+        <div class="modal-header">
+          <h3>Create Feature Flag</h3>
+          <button id="closeModalBtn" class="modal-close">✕</button>
+        </div>
+
+        <form id="createFlagForm" class="modal-body">
+          <input id="flagName" type="text" placeholder="Flag name" required />
+
+          <select id="flagEnv">
+            <option value="dev">dev</option>
+            <option value="staging">staging</option>
+            <option value="prod">prod</option>
+          </select>
+
+          <select id="flagEnabled">
+            <option value="false">Disabled</option>
+            <option value="true">Enabled</option>
+          </select>
+
+          <input
+            type="text"
+            id="flagDescription"
+            placeholder="Description (optional)"
+          />
+
+          <button type="submit" id="createBtn" class="primary" disabled>
+            Create Flag
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('ui.static', filename='js/dashboard.js') }}"></script>
+  </body>
+</html>

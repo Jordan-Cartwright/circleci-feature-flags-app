@@ -1,0 +1,631 @@
+/* =========================================================
+  LIGHT THEME DEFAULT
+========================================================= */
+
+:root {
+  /* COLORS */
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --surface-2: #fafafa;
+
+  --text: #111;
+  --text-muted: #666;
+
+  --border: #e6e6e6;
+  --border-soft: #eee;
+
+  --primary: #2d6cdf;
+
+  /* primary states */
+  --primary-hover: #2458c4;
+  --primary-text: #e6e6e6;
+  --primary-active: #1e4aa3;
+
+  /* subtle background usage */
+  --primary-soft: rgba(45, 108, 223, 0.08);
+  --primary-soft-hover: rgba(45, 108, 223, 0.12);
+
+  --success: #2ecc71;
+  --danger: #e74c3c;
+
+  --hover: #f2f2f2;
+
+  /* SHADOWS */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+  /* RADII */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+
+  /* SPACING */
+  --space-1: 6px;
+  --space-2: 10px;
+  --space-3: 14px;
+  --space-4: 16px;
+  --space-5: 20px;
+
+  /* SHORTCUTS */
+  --short-cut-color: var(--text-muted);
+  --short-cut-background: var(--surface-2);
+  --short-cut-border: var(--border-soft);
+
+  /* TOGGLE SWITCH */
+  --toggle-switch-enabled: #22c55e;
+  --toggle-switch-enabled-hover: #16a34a;
+
+  --toggle-switch-disabled: #ef4444;
+  --toggle-switch-disabled-hover: #dc2626;
+
+  --toggle-label-enabled: rgba(255, 255, 255, 0.95);
+  --toggle-label-disabled: #374151;
+}
+
+/* =========================================================
+  DARK THEME
+========================================================= */
+
+body.dark {
+  --bg: #0f1115;
+  --surface: #161a22;
+  --surface-2: #1a1f2b;
+
+  --text: #e6e6e6;
+  --text-muted: #a0a0a0;
+
+  --border: #2a2f3a;
+  --border-soft: #222835;
+
+  --primary: #4c8dff;
+
+  --primary-hover: #3f7cf0;
+  --primary-text: #2a2f3a;
+  --primary-active: #2f68d6;
+
+  --primary-soft: rgba(76, 141, 255, 0.12);
+  --primary-soft-hover: rgba(76, 141, 255, 0.18);
+
+  --hover: #1f2430;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.6);
+
+  --short-cut-color: var(--text-muted);
+  --short-cut-background: var(--surface);
+  --short-cut-border: var(--border-soft);
+
+  --toggle-switch-enabled: #16a34a;
+  --toggle-switch-enabled-hover: #15803d;
+
+  --toggle-switch-disabled: #dc2626;
+  --toggle-switch-disabled-hover: #b91c1c;
+
+  --toggle-label-enabled: rgba(255, 255, 255, 0.9);
+  --toggle-label-disabled: rgba(255, 255, 255, 0.65);
+}
+
+/* =========================================================
+  BASE
+========================================================= */
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 40px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* =========================================================
+  HEADER
+========================================================= */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-5);
+  gap: var(--space-5);
+}
+
+.controls {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+  INPUTS + BUTTONS
+========================================================= */
+
+button,
+select,
+input {
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  outline: none;
+  background: var(--surface);
+  color: var(--text);
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.15s ease;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button.primary:hover {
+  color: var(--primary-text);
+}
+
+button.primary:active {
+  color: var(--primary-text);
+}
+
+button:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+button:active {
+  transform: scale(0.98);
+  background: var(--primary-soft-hover);
+  border-color: var(--primary);
+  color: var(--text);
+}
+
+button:not(.primary):hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+  SEARCH INPUT
+========================================================= */
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrapper:focus-within .search-shortcut {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.search-input {
+  width: 100%;
+  padding-right: 60px; /* space for shortcut hint */
+}
+
+.search-shortcut {
+  position: absolute;
+  right: 10px;
+
+  font-size: 12px;
+  color: var(--short-cut-color);
+
+  background: var(--short-cut-background);
+  border: 1px solid var(--short-cut-border);
+
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+
+  pointer-events: none;
+  user-select: none;
+}
+
+/* =========================================================
+  CREATE PANEL
+========================================================= */
+
+.create-panel {
+  background: var(--surface);
+  padding: var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* =========================================================
+  TABLE
+========================================================= */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  margin-top: var(--space-5);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+  background: var(--surface-2);
+}
+
+th,
+td {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+}
+
+/* =========================================================
+  EMPTY STATE
+========================================================= */
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-muted);
+}
+
+.empty-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.empty-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* =========================================================
+  BADGES
+========================================================= */
+
+.badge-on {
+  color: var(--success);
+  font-weight: 600;
+}
+
+.badge-off {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+/* =========================================================
+  DESCRIPTION INPUT
+========================================================= */
+.desc-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  position: relative;
+}
+
+.desc-input {
+  flex: 1; /* Important to prevent wrapping behavior */
+  min-width: 0; /* Important for flex overflow issues */
+  margin-top: 6px;
+  width: 100%;
+  padding: var(--space-1) var(--space-2);
+  font-size: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.desc-input:focus {
+  background: var(--surface);
+  border-color: var(--text-muted);
+}
+
+.desc-input.typing {
+  border-color: var(--text-muted);
+}
+
+.desc-input.saving {
+  opacity: 0.7;
+}
+
+.desc-input.saved {
+  border-color: var(--success);
+  background: rgba(46, 204, 113, 0.08);
+}
+
+.desc-input.error {
+  border-color: var(--danger);
+  background: rgba(231, 76, 60, 0.08);
+}
+
+/* =========================================================
+  SAVE INDICATOR
+========================================================= */
+
+.save-indicator {
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  display: inline-block;
+}
+
+.save-indicator.saving {
+  border: 2px solid var(--border);
+  border-top: 2px solid var(--text);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.save-indicator.saved::after {
+  content: "✔";
+  color: var(--success);
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.save-indicator.error::after {
+  content: "✖";
+  color: var(--danger);
+  font-size: 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+  ACTION BUTTONS
+========================================================= */
+
+.delete {
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  background: rgba(231, 76, 60, 0.05);
+  color: var(--danger);
+}
+
+.delete:hover {
+  background: rgba(231, 76, 60, 0.1);
+}
+
+/* =========================================
+  TOGGLE SWITCH
+========================================= */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 79px;
+  height: 26px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* track */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--toggle-switch-disabled);
+  border-radius: 999px;
+  transition: background-color 0.2s ease;
+  /* track text */
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+/* knob */
+.slider::before {
+  content: "";
+  position: absolute;
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  top: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s ease;
+  box-shadow: var(--shadow-sm);
+  z-index: 2;
+}
+
+/* labels */
+.switch-label {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.switch-label.on {
+  left: 8px;
+  color: var(--toggle-label-enabled);
+  opacity: 0;
+}
+
+.switch-label.off {
+  right: 8px;
+  color: var(--toggle-label-disabled);
+  opacity: 1;
+}
+
+/* checked state */
+.switch input:checked + .slider {
+  background-color: var(--toggle-switch-enabled);
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(54px);
+}
+
+.switch input:checked + .slider .switch-label.on {
+  opacity: 1;
+}
+
+.switch input:checked + .slider .switch-label.off {
+  opacity: 0;
+}
+
+/* Enabled hover */
+.switch input:checked + .slider:hover {
+  background-color: var(--toggle-switch-enabled-hover);
+}
+
+/* Disabled hover */
+.switch input:not(:checked) + .slider:hover {
+  background-color: var(--toggle-switch-disabled-hover);
+}
+
+/* focus accessibility */
+.switch input:focus + .slider {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* =========================================================
+  META / PANEL
+========================================================= */
+
+.meta {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--space-2);
+}
+
+.panel {
+  margin-top: var(--space-5);
+  background: #111;
+  color: #0f0;
+  padding: var(--space-3);
+  font-size: 12px;
+  display: none;
+  border-radius: var(--radius-md);
+  overflow: auto;
+}
+
+/* =========================================================
+  ERROR
+========================================================= */
+
+.error {
+  color: var(--danger);
+  margin-top: var(--space-2);
+  font-size: 13px;
+}
+
+/* =========================================================
+  MODAL
+========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal {
+  background: var(--surface);
+  width: 420px;
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.modal-body input,
+.modal-body select {
+  padding: var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* =========================================================
+  PRIMARY BUTTON
+========================================================= */
+
+.primary {
+  background: var(--primary);
+  color: white;
+  border: 1px solid var(--primary);
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.primary:hover {
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
+}
+
+.primary:active {
+  background: var(--primary-active);
+}
+
+/* =========================================================
+  UTIL
+========================================================= */
+
+.hidden {
+  display: none;
+}
