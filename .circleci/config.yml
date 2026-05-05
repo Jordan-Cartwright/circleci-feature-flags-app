@@ -72,6 +72,7 @@ jobs:
 
   build-amd64:
     executor: amd64-machine
+    parallelism: 3
     steps:
       - checkout
 
